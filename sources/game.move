@@ -19,6 +19,7 @@ module suifarm::game
 
     struct Inventory has key, store
     {
+        id: UID,
         pickaxe: Option<Item>,
         axe: Option<Item>,
         basket: Option<Item>,
@@ -39,15 +40,24 @@ module suifarm::game
     struct Item has key, store
     {
         id: UID,
-        in_game_id: u8,
+        in_game_id: u16,
         held: u8,
         name: string::String,
         image_url: string::String,
     }
 
+    impl Inventory {
+        fn unwrap(&self) -> &Inventory {
+            match &self.inventory {
+                Some(inventory) => inventory,
+                None => panic!("Called `Player::unwrap_inventory()` on a `None` value"),
+            }
+        }
+    }
+
     public entry fun create_player(xp: u8, ctx: &mut TxContext)
     {
-        let inventory = create_new_inventory();
+        let inventory = create_new_inventory(ctx);
         transfer::transfer(Player {
             id: object::new(ctx),
             xp: xp,
@@ -56,125 +66,156 @@ module suifarm::game
         tx_context::sender(ctx));
     }
 
-    fun create_new_inventory(): Inventory
+    fun create_new_inventory(ctx: &mut TxContext): Inventory
     {
         Inventory
         {
+            id: object::new(ctx), 
             pickaxe: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10013,
                 held: 0,
-                name: "Pickaxe",
-                image_url: "https://bafkreicpi5dtcswo7e3dvly2upwzjse3k3dy6q3gycwfjm434nmh4bfiri.ipfs.dweb.link/"
+                name: string::utf8(b"Pickaxe"),
+                image_url: string::utf8(b"https://bafkreicpi5dtcswo7e3dvly2upwzjse3k3dy6q3gycwfjm434nmh4bfiri.ipfs.dweb.link/")
             }),
             axe: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10005,
                 held: 0,
-                name: "Axe",
-                image_url: "https://bafkreielbw2mux3vptrzuougyt7bt4ctwgyw6igfnlnhsh6yvoz3avndem.ipfs.dweb.link/"
+                name: string::utf8(b"Axe"),
+                image_url: string::utf8(b"https://bafkreielbw2mux3vptrzuougyt7bt4ctwgyw6igfnlnhsh6yvoz3avndem.ipfs.dweb.link/")
             }),
             basket: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10012,
                 held: 0,
-                name: "Basket",
-                image_url: "https://bafkreiaty23ypd5cjlvtmdbpngbnmvtiyltqzvctplbznfyyiwvmjhamqu.ipfs.dweb.link/"
+                name: string::utf8(b"Basket"),
+                image_url: string::utf8(b"https://bafkreiaty23ypd5cjlvtmdbpngbnmvtiyltqzvctplbznfyyiwvmjhamqu.ipfs.dweb.link/")
             }),
             corn: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10002,
                 held: 0,
-                name: "Corn",
-                image_url: "https://bafkreifltsjqnye4l7wkptdvjnaz6od5ogn6vwrytumm3glgm7fcm33jrq.ipfs.dweb.link/"
+                name: string::utf8(b"Corn"),
+                image_url: string::utf8(b"https://bafkreifltsjqnye4l7wkptdvjnaz6od5ogn6vwrytumm3glgm7fcm33jrq.ipfs.dweb.link/")
             }),
             parsnip: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10007,
                 held: 0,
-                name: "Parsnip",
-                image_url: "https://bafkreia4mcrcfr6iwcrhsah57ywerws5wi7gamxj7b523qi35g5logjagy.ipfs.dweb.link/"
+                name: string::utf8(b"Parsnip"),
+                image_url: string::utf8(b"https://bafkreia4mcrcfr6iwcrhsah57ywerws5wi7gamxj7b523qi35g5logjagy.ipfs.dweb.link/")
             }),
             pumpkin: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10001,
                 held: 0,
-                name: "Pumpkin",
-                image_url: "https://bafkreiga5iz5vmdkvgzq375ntcbs4jziyv5symfz6skmd4wtuvv36njlh4.ipfs.dweb.link/"
+                name: string::utf8(b"Pumpkin"),
+                image_url: string::utf8(b"https://bafkreiga5iz5vmdkvgzq375ntcbs4jziyv5symfz6skmd4wtuvv36njlh4.ipfs.dweb.link/")
             }),
             stone: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10015,
                 held: 0,
-                name: "Stone",
-                image_url: "https://bafkreiehvy5d4h5xh6doiaxsss5vecbixd7ll6dcfbdolojyjtqwxzsh54.ipfs.dweb.link/"
+                name: string::utf8(b"Stone"),
+                image_url: string::utf8(b"https://bafkreiehvy5d4h5xh6doiaxsss5vecbixd7ll6dcfbdolojyjtqwxzsh54.ipfs.dweb.link/")
             }),
             weed: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10020,
                 held: 0,
-                name: "Weed",
-                image_url: "https://bafkreihwayy5uko53ffhganvhfczgom7vv7wcymzfhltt77ixwsqmnkjvm.ipfs.dweb.link/"
+                name: string::utf8(b"Weed"),
+                image_url: string::utf8(b"https://bafkreihwayy5uko53ffhganvhfczgom7vv7wcymzfhltt77ixwsqmnkjvm.ipfs.dweb.link/")
             }),
             wood: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10008,
                 held: 0,
-                name: "Wood",
-                image_url: "https://bafkreifpgtzqvighooclv5p3czwqj7lutnoeup23oi5buoqwg7v5zhntqm.ipfs.dweb.link/"
+                name: string::utf8(b"Wood"),
+                image_url: string::utf8(b"https://bafkreifpgtzqvighooclv5p3czwqj7lutnoeup23oi5buoqwg7v5zhntqm.ipfs.dweb.link/")
             }),
             hoe: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10004,
                 held: 0,
-                name: "Hoe",
-                image_url: "https://bafkreibraxpnocidllmhriknwuuy6whyh6ixuwtpfydmcsimldndemr2v4.ipfs.dweb.link/"
+                name: string::utf8(b"Hoe"),
+                image_url: string::utf8(b"https://bafkreibraxpnocidllmhriknwuuy6whyh6ixuwtpfydmcsimldndemr2v4.ipfs.dweb.link/")
             }),
             scythe: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10017,
                 held: 0,
-                name: "Scythe",
-                image_url: "https://bafkreifigrglrdbtzjbgfwkpor3ezjw2x7jfpn4gvaokshuktmast3nw6a.ipfs.dweb.link/"
+                name: string::utf8(b"Scythe"),
+                image_url:string::utf8(b"https://bafkreifigrglrdbtzjbgfwkpor3ezjw2x7jfpn4gvaokshuktmast3nw6a.ipfs.dweb.link/")
             }),
             acorn: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10000,
                 held: 0,
-                name: "Acorn",
-                image_url: "https://bafkreihhoqzanwbie5g6txegv5uiwnlp7ca5gnvmkmuqrxyyj2hkma54ly.ipfs.dweb.link/"
+                name: string::utf8(b"Acorn"),
+                image_url: string::utf8(b"https://bafkreihhoqzanwbie5g6txegv5uiwnlp7ca5gnvmkmuqrxyyj2hkma54ly.ipfs.dweb.link/")
             }),
             parsnip_seed: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10006,
                 held: 0,
-                name: "Parsnip Seed",
-                image_url: "https://bafkreibmmduvgawjpjlo6h6usuudfwy6syivdewgvz666ljpplwojli5aq.ipfs.dweb.link/"
+                name: string::utf8(b"Parsnip Seed"),
+                image_url: string::utf8(b"https://bafkreibmmduvgawjpjlo6h6usuudfwy6syivdewgvz666ljpplwojli5aq.ipfs.dweb.link/")
             }),
             pine: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10009,
                 held: 0,
-                name: "Pine",
-                image_url: "https://bafkreiaiz4mjx3uneh6bei2yih7bfzuc5vlsixulh3soxtrh2pqldspvu4.ipfs.dweb.link/"
+                name: string::utf8(b"Pine"),
+                image_url: string::utf8(b"https://bafkreiaiz4mjx3uneh6bei2yih7bfzuc5vlsixulh3soxtrh2pqldspvu4.ipfs.dweb.link/")
             }),
             watering_can: option::some(Item {
-                id: object::new(),
+                id: object::new(ctx),
                 in_game_id: 10003,
                 held: 0,
-                name: "Watering Can",
-                image_url: "https://bafkreiezn4g476kojoomuoh7euuflhcwy3mxn4h7qow2fgxabkbgozpnwa.ipfs.dweb.link/"
+                name: string::utf8(b"Watering Can"),
+                image_url: string::utf8(b"https://bafkreiezn4g476kojoomuoh7euuflhcwy3mxn4h7qow2fgxabkbgozpnwa.ipfs.dweb.link/")
             })
         }
     }
 
-    public entry fun update_player_metadata(player: &mut Player, metadata: vector<u8>)
+    public entry fun update_inventory(player: &mut Player, 
+        pickaxe: u8, 
+        axe: u8,
+        basket: u8,
+        corn: u8,
+        parsnip: u8,
+        pumpkin: u8,
+        stone: u8,
+        weed: u8,
+        wood: u8,
+        hoe: u8,
+        scythe: u8,
+        acorn: u8,
+        parsnip_seed: u8,
+        pine: u8,
+        watering_can: u8)
     {
-        player.metadata = metadata;
+        let inventory = player.inventory.unwrap();
+        inventory.pickaxe.unwrap().held = pickaxe;
+        inventory.axe.unwrap().held = axe;
+        inventory.basket.unwrap().held = basket;
+        inventory.corn.unwrap().held = corn;
+        inventory.parsnip.unwrap().held = parsnip;
+        inventory.pumpkin.unwrap().held = pumpkin;
+        inventory.stone.unwrap().held = stone;
+        inventory.weed.unwrap().held = weed;
+        inventory.wood.unwrap().held = wood;
+        inventory.hoe.unwrap().held = hoe;
+        inventory.scythe.unwrap().held = scythe;
+        inventory.acorn.unwrap().held = acorn;
+        inventory.parsnip_seed.unwrap().held = parsnip_seed;
+        inventory.pine.unwrap().held = pine;
+        inventory.watering_can.unwrap().held = watering_can;
     }
 
-    public fun get_player_metadata(player: &Player): vector<u8>
+    public entry fun update_player_xp(player: &mut Player, xp: u8)
     {
-        player.metadata
+        player.xp = player.xp + xp;
     }
 }
